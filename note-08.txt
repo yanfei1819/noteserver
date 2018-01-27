@@ -1,0 +1,10 @@
+a.发送ajax请求
+单击笔记菜单中"分享"按钮，携带笔记ID
+
+b.Controller-->Service-->Dao
+ 向分享表cn_share插入一条记录（save）
+ 标题，内容，id来源于cn_note表（findById）
+
+c.ajax回调函数
+ 提示分享成功
+

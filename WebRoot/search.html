@@ -1,0 +1,55 @@
+<html>
+	<head>
+	<script type="text/javascript" src="scripts/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(function(){
+		$("#search_btn").click(function(){
+			//获取要提交数据
+			var title = $("#title").val().trim();
+			var beginDate = $("#beginDate").val();
+			var endDate = $("#endDate").val();
+			//TODO 检测日期格式
+			//发送ajax请求
+			$.ajax({
+				url:"http://localhost:8080/noteserver/note/hightsearch.form",
+				type:"post",
+				data:{"title":title,"beginDate":beginDate,"endDate":endDate},
+				dataType:"json",
+				success:function(result){
+					if(result.status=="0"){
+						//清除原有列表
+						$("#share_table tr:gt(0)").remove();
+						//将result.data数据循环生成tr
+						for(i=0;i<result.data.length;i++){
+							var row = result.data[i];
+							var noteTitle = row.cn_share_title;
+							var createDate = row.cn_note_create_time;
+							var userName = row.cn_user_name;
+							var $tr = $("<tr><td>"+noteTitle+"</td><td>"+createDate+"</td><td>"+userName+"</td></tr>");
+							$("#share_table").append($tr);
+						}
+					}
+				}
+			});
+		});
+	});
+	</script>
+	</head>
+	<body >
+		<div>
+		标题:<input type="text" id="title">
+		开始日期:<input type="text" id="beginDate">
+		结束日期:<input type="text" id="endDate">
+		<input type="button" id="search_btn" value="高级搜索">
+		</div>
+		<hr/>
+		<table id="share_table">
+			<tr>
+				<td>标题</td>
+				<td>发布时间</td>
+				<td>发布者</td>
+			</tr>
+		</table>
+	</body>
+</html>

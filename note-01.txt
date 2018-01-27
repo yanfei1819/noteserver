@@ -1,0 +1,185 @@
+
+
+任务一：将Spring+Mybatis练习做完
+任务二：下载项目资料,了解项目情况
+            (查看云笔记需求说明书.pdf)
+
+1.项目主要功能(12天)
+用户：登录，注册，修改密码
+笔记本：添加,删除,修改
+笔记：添加,删除,修改,分享,收藏,参加活动,搜索
+回收站 : 查看,撤销删除,彻底删除
+活动：投稿,查看活动，收藏活动笔记
+分享/收藏管理
+ 
+2.项目设计主要技术
+SpringMVC
+SpringIOC
+Spring AOP
+MyBatis
+Ajax
+jQuery
+
+=======================
+项目情况简介（1-2分钟）
+做了哪些工作（简介）
+用什么技术做的（详细）
+SpringMVC ： 实现MVC结构web程序,接收请求转发业务组件处理
+     原因：简化mvc开发,简单,方便,与Spring框架不涉及整合问题
+SpringIOC ： 管理程序中组件,以注入方式建立关联
+     原因：降低组件耦合度
+Spring AOP ： 做事务管理
+    原因：将共通逻辑与普通业务解耦
+MyBatis ： 实现数据库操作,实现Dao
+   原因：简单，方便, 便于程序员优化SQL操作
+Ajax ： 发送异步请求和处理,实现页面局部刷新
+   原因：很多功能都集中在一个页面,采用Ajax可以提升用户体验,
+          避免页面整体频繁刷新,减少数据传输提升程序性能
+jQuery ： 简化js编程
+    原因：会大量采用js,处理ajax和表单校验,特效，
+          采用jQuery可以简化js编程复杂度（选择器,事件,ajax）
+遇到过哪些问题,怎么解决的（详细）
+----?????
+
+
+==========================
+数据库导入
+  create database note;    //创建note库
+  use note;    //进入note库
+  set names utf8;     //设置连接和客户端编码
+  source D:\\cloud_note.sql;    //导入sql文件
+  show tables;    //查看库里表有哪些
+
+==========================
+1.分层开发
+表现层--》html(js,ajax)
+控制层--》SpringMVC DispatcherServelt,Controller
+业务层--》Service （JavaBean）
+数据访问层--》MyBatis MapperDao
+
+2.所有请求一律采用Ajax方式发出
+  HTML一律采用Ajax方式发送请求提交数据，
+  服务器端Controller处理完毕返回JSON结果 
+
+3.服务器返回的JSON格式必须为
+  {
+    "status":0,       //处理状态，0表示成功,其他失败
+    "msg":"消息",  //反馈消息
+    "data":数据      //反馈的数据
+  }
+ 
+ 
+======登录实现===========
+1.设计流程
+ log_in.html(ajax)-->/user/login.form(携带数据)
+-->DispatcherServlet-->HandlerMapping
+-->LoginController.execute
+-->UserService.checkLogin
+-->UserMapperDao.findByName
+-->返回约定的JSON结果
+
+a.搭建SpringMVC,SpringIOC,MyBatis环境
+  --引入mvc,ioc,aop,dao,mybatis,dbcp,驱动开发包
+  --src下添加applicationContext.xml
+  --测试ApplicationContext
+
+ org.tarena.note.web.controller     //controller
+ org.tarena.note.web.controller.user  //放用户相关的
+ org.tarena.note.web.controller.notebook //放笔记本相关
+ org.tarena.note.web.controller.note //放笔记相关
+  。。。。。。。。。。
+ org.tarena.note.web.interceptor  //拦截器
+ org.tarena.note.service  //service组件
+ org.tarena.note.service.test  //service组件测试
+ org.tarena.note.dao       //dao组件
+ org.tarena.note.dao.test       //dao组件测试
+ org.tarena.note.entity   //实体类
+ org.tarena.note.sql        //SQL定义的XML
+ org.tarena.note.test      //测试类
+
+b.实现UserMapperDao组件（Spring+MyBatis）
+ --编写实体类
+ --编写SQL定义的XML
+ --编写UserMapperDao接口
+ --配置SqlSessionFactoryBean,MapperScannerConfigurar
+ --测试UserMapperDao
+
+c.实现UserService
+  --编写UserService接口
+  --编写UserService实现组件
+  --配置UserService(组件扫描,注入Dao)
+  --测试Service
+
+d.实现LoginController
+ --编写LoginController实现类
+ --配置Controller(组件扫描,注入Service)
+
+e.配置设计好的请求和处理流程
+ --在web.xml配置DispatcherServlet
+ --在applicationContext.xml开启mvc注解配置
+   <mvc:annotation-driven/>
+   支持@RequestMapping,@ResponseBody等标记
+ --添加jackson系列jar包,用于对象和json字符串转换
+
+
+
+
+客户端编程:
+ a.用户点按钮，获取表单信息，发送Ajax请求
+   请求/user/login.form
+
+ b.接收Controller返回的JSON结果,
+   将JSON结果解析显示到页面
+
+
+
+<img src=""/>
+.val("hello");
+$("div").text("<a>hello</a>");
+$("div").html("<a>hello</a>");
+.addClass("c1");
+.removeClass("c1");
+
+.attr("src","a.jpg");
+
+
+<div class="c1">hello</div>
+
+
+$.ajax({
+  url:"地址",
+  type:"get或post",
+  data:提交的数据,
+  dataType:返回数据类型,
+  async:true/false,
+  beforeSend:function(xhr){
+    //xhr是XMLHttpRequest
+  },
+  success:function(result){
+  
+  },
+  error:function(){
+     
+  }
+
+});
+
+
+$.get("地址","数据","success回调函数","json")
+$.post("地址","数据","success回调函数","json")
+
+//将地址返回结果放到mydiv中
+$("#mydiv").load("地址",数据);
+
+$.ajax({
+ url:地址,
+ type:"post|get",
+ success:function(msg){
+    $("#mydiv").html(msg);
+ }
+
+})
+
+
+name=tom&pwd=123
+{"name":"tom","pwd":"123"}

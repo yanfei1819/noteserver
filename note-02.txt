@@ -1,0 +1,44 @@
+1.采用HTTP Basic Authentication模式
+  传输用户名和密码（更高级采用RSA非对称加密算法）
+
+  html-->将身份认证信息拼成"用户名:密码"
+         然后将信息采用Base64加密
+	 之后将信息放入Http请求的header存储
+         最后将请求发出
+
+
+  Controller-->从Request的header部分
+               取出加密信息
+	       对信息进行Base64解密
+	       解析出用户和密码
+	       然后再调用checkLogin验证
+
+
+2.实现注册处理
+
+ /user/regist.form(ajax提交表单)
+ -->DispatcherServlet
+ -->HanlderMapping(@RequestMapping)
+ -->RegistController.execute
+ -->UserService.regist
+ -->UserMapperDao.save
+ -->返回NoteResult对象的JSON结果 
+ -->html的ajax回调函数处理JSON
+
+
+ a.实现UserMapperDao.save方法
+  --定义SQL语句
+  --编写接口方法
+  --测试MapperDao
+
+ b.实现UserService.regist
+  --向UserService接口和UserServiceImpl
+    追加regist方法
+  --测试UserService
+
+
+ c.实现RegistController.execute
+  --编写RegistController类
+  --测试/user/regist.form
+
+http://localhost:8080/noteserver/user/regist.form?cn_user_name=tom&cn_user_password=123&cn_user_desc=tom

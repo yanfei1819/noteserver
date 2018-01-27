@@ -1,0 +1,40 @@
+=====edit.html页面========
+1.笔记本列表显示
+  一进入页面自动发送ajax请求获取cn_notebook表该用户
+的笔记本信息,以json返回后,页面采用js循环显示到页面上
+
+  $(function(){
+     //发送ajax
+  });
+
+ /notebook/loadlist.form
+-->DispatcherServlet-->HanlderMapping
+-->NoteBookListController.execute()
+-->NoteBookService.loadListByUserId()
+-->NoteBookMapperDao.findByUserId()
+-->返回NoteResult结构的json数据
+
+ajax回调函数解析result.data数据循环显示到页面
+
+a.实现NoteBookMapperDao.findByUserId
+  --编写实体类
+  --定义SQL
+  --定义MapperDao接口
+  --测试MapperDao
+
+b.实现NoteBookService
+  --编写NoteBookService及其方法
+  --将NoteBookService扫描到Spring容器
+     将NoteBookMapperDao注入到Service
+
+c.实现NoteBookListController
+  --编写Controller及其方法
+  --将Controller扫描到Spring容器
+  --将Service注入到Controller
+  --在Controller添加@RequestMapping
+  --在Controller方法前添加@ResponseBody
+
+
+========修改注册功能==========
+注册成功后自动创建一个"默认笔记本"
+注册成功向cn_notebook表添加一条记录

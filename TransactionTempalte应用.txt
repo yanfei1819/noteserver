@@ -1,0 +1,16 @@
+public class SimpleService implements Service {
+
+  private TransactionTemplate transactionTemplate;
+
+
+  public Object someServiceMethod() {
+    return transactionTemplate.execute(
+    new TransactionCallback() {
+
+      public Object doInTransaction(TransactionStatus status) {
+        updateOperation1();
+        return resultOfUpdateOperation2();
+      }
+    });
+  }
+}

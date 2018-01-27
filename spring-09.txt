@@ -1,0 +1,182 @@
+1.Spring框架事务管理
+（要求：掌握声明式事务管理使用方法,
+ 了解事务属性作用）
+
+  a.事务管理
+   事务是数据库操作相关的概念.
+  可以确认或撤销前面执行的insert,
+ update,delete语句
+  
+  b.为什么使用事务
+   为了保障业务处理的完整性
+  (含有一个或多个数据库操作)
+
+  一般很多数据库或框架，一个操作后会自动
+提交事务或回滚事务;（默认提交）
+  如果一个业务处理只有一个dao方法完成可以
+用默认方式;否则不能使用。
+
+  public void save(){
+    empDao.save();
+ }
+
+
+   @Transactional
+   public void f1(){
+       noteDao.save(note);
+       noteBookDao.save(notebook);
+       //没错误提交;有错误回滚
+   }
+
+//调用DataSourceTransactionManager.开启事务
+//调用f1方法
+//调用DataSourceTransactionManager提交或回滚事务
+
+
+
+  public void f2(){
+    dao.save();//数据库操作
+    //业务逻辑运算或文件处理
+   //没错误提交;有错误回滚
+  }
+
+ c.Spring事务管理方法
+  --编程式事务管理（基于Java编码）
+     TransactionTemplate
+  --*声明式事务管理（基于注解或XML配置）
+     第一步:在applicationContext.xml中
+               定义一个事务管理的<bean>
+     第二步:开启事务注解配置
+         <tx:annotation-driven 
+     transaction-manager="事务管理bean"/>
+     第三步:在业务方法前或类定以前添加
+         @Transactional
+      (业务方法采用一个事务控制,抛出异常撤销
+      方法中的db操作)
+
+JdbcTemplate.update("insert...",参数);
+//封装了获取连接
+//**封装了根据sql生成Statement
+//**封装了设置参数
+//封装了执行sql
+//封装了释放连接
+
+TransactionTemplate.execute(callback)
+//获取连接，开启事务
+//调用业务方法callback.doIntransaction();
+//没有错提交，有错回滚事务
+
+
+d.事务属性的控制
+ @Transactional含义
+  --事务可读可写--》readOnly
+    如果只读操作建议使用readOnly=true
+  --遇到RuntimeException自动回滚
+    (检查异常不会回滚)
+    rollbackFor=异常类型.class
+    如果方法抛出的是自定义类型异常，
+    自定义继承RuntimeException可以自动回滚;
+    如果从Exception或Throwable继承需要使用
+    rollbackFor属性指定
+  --事务传播类型为REQUIRED
+    遇到具有事务管理的方法互相调用时
+    会涉及到事务传播。
+    通过propagation属性控制.
+    (建议采用默认值)
+
+@Transactional
+public void f1(){
+  f2();//f2可以使用f1的事务,也可以选择自己的事务
+}
+
+public void f3(){
+  f2();//f2可以使用f1的事务,也可以选择自己的事务
+}
+
+@Transactional(propagation=Propagation.REQUIRED)
+public void f2(){
+}
+
+  --事务并发类型为DEFAULT
+   可以通过设置事务的隔离级别解决并发。
+   隔离级别有以下几种：
+   READ_UNCOMMITTED ： 未提交可读
+   READ_COMMITTED ：提交可读
+   REPEATABLE_READ : 不可重复读
+   SERIALIZABLE : 线性操作
+   DEFAULT:根据数据库选择,一般为READ_COMMITTED
+
+   (建议采用默认DEFAULT级别,遇到特殊操作
+   例如查询更新操作可以采用锁机制进行互斥)
+
+2.Spring框架AOP应用
+
+可以动态将一个组件作用到另外
+一批组件方法上。（可以降低组件耦合度）
+
+a.AOP(Aspect Oriented Programming)
+  面向方面/切面编程
+
+ AOP编程与OOP不同,OOP侧重点是对象;
+ AOP侧重点是方面。
+AOP目的：将一些通用逻辑,从传统的业务中
+  剥离出来,然后通过配置方式动态切入到
+  传统业务组件中。优点就是降低共通和
+  传统业务的耦合度。
+
+ AOP适用环境：
+  --通用处理（共通）
+  --功能切入时机相同
+
+b.AOP相关概念
+ --方面(Aspect)
+   方面组件用于封装共通处理,可以通过AOP
+   配置切入到其他目标组件方法中
+   （把哪个组件切入）
+ --切入点(Pointcut)
+   Spring提供了各种切入点表达式。
+   用于指定哪些组件和方法是目标。
+   （往哪些组件和方法切入）
+   
+  1）方法限定表达式
+   execution(修饰符? 返回类型 方法名(参数) 抛出异常?)
+
+   //匹配容器中以find开头的方法
+   execution(* find*(..))
+   //匹配UserService中所有方法
+   execution(* org.service.UserService.*(..))
+   //匹配org.service包下所有类所有方法
+   execution(* org.service.*.*(..))
+   //匹配org.service包及子包所有类所有方法
+   execution(* org.service..*.*(..))
+
+  2）类型限定表达式
+   within(类型)
+   //匹配org.service.UserService所有方法
+   within(org.service.UserService)
+   //匹配org.service包所有类所有方法
+   within(org.service.*)
+   //匹配org.service及子包所有类所有方法
+   within(org.service..*)
+
+
+
+
+
+ --通知(Advice)
+   用于指定切入时机（决定方面执行时机）
+   （方面组件啥时候切入目标组件方法）
+   Spring提供以下5种通知：
+ try{
+   前置通知<aop:before>//调用方面组件处理
+   //环绕通知--前置部分
+   //执行目标组件方法
+   //环绕通知--后置部分
+   后置通知<aop:after-returning>//调用方面
+ }catch(){
+   异常通知<aop:after-throwing>//调用方面
+ }finally{
+   最终通知<aop:after>//调用方面
+ }
+   
+

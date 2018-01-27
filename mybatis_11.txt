@@ -1,0 +1,37 @@
+1.MyBatis动态SQL
+
+MyBatis提供了一些逻辑标签，可以在
+SQL定义的XML中使用，用于拼写动态SQL语句
+
+<if test="">xxx</if>
+
+<choose>
+  <when test="">xxx</when/>
+  <when test="">xxx</when/>
+  <otherwise>xxx</otherwise>
+</choose>
+
+Integer[] dnos = {10,50,60}
+
+select * from emp
+where dno in
+<foreach open="(" close=")" 
+  collection="dnos" item="dno"
+  separator=",">
+  #{dno}
+</foreach>
+
+(10,50,60)
+
+
+select * from emp
+where deptno in (10,20,30)
+
+
+<where>条件内容</where> : 
+作用1会生成一个WHERE关键字
+作用2会将条件内容前面多余的and或or过滤掉
+
+
+
+

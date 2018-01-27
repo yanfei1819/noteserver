@@ -1,0 +1,12 @@
+/note/loadnote.form(带noteId值)
+-->LoadNoteController.execute
+-->NoteService.loadNoteById
+-->NoteMapperDao.findById
+-->返回NoteResult的json结果
+
+===========项目练习任务============
+1.将昨天"保存笔记"代码从edit.html中
+  提取到note.js
+  (将um变量的定义提取到了$(function)
+   外面扩大使用范围)
+2.笔记的单击事件处理

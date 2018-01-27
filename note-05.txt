@@ -1,0 +1,26 @@
+/notebook/add.form
+-->DispatcherServlet-->HanlderMapping
+-->AddNoteBookController.execute
+-->NoteBookService.add
+-->NoteBookMapperDao.save()
+-->返回NoteResult结构的json数据
+
+如果添加成功,关闭添加窗口,然后将添加的笔记本追加到列表
+
+=========显示某个笔记本的笔记信息============
+1.单击笔记本选项，发送ajax请求
+  
+2.查询笔记信息,以json返回
+  /note/loadlist.form
+-->DispatcherServlet-->HanlderMapping
+-->NoteListController.execute
+-->NoteService.loadNoteByBookId
+-->NoteMapperDao.findByBookId-->cn_note
+-->返回NoteResult结构的json结果
+
+3.将返回的笔记信息显示到笔记列表
+解析数据，以列表方式给用户呈现
+
+
+
+

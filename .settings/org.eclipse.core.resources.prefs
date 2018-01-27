@@ -1,0 +1,11 @@
+#Thu Jun 25 10:52:48 CST 2015
+eclipse.preferences.version=1
+encoding//WebRoot/alert/alert_error.html=UTF-8
+encoding//WebRoot/alert/alert_note.html=UTF-8
+encoding//WebRoot/alert/alert_notebook.html=UTF-8
+encoding//WebRoot/edit.html=UTF-8
+encoding//WebRoot/scripts/base64.js=UTF-8
+encoding//WebRoot/scripts/cookie_util.js=UTF-8
+encoding//WebRoot/scripts/note/note.js=UTF-8
+encoding//WebRoot/scripts/notebook/notebook.js=UTF-8
+encoding//src/log4j.properties=UTF-8
